@@ -207,7 +207,7 @@ RCT_EXPORT_METHOD(openCamera:(NSDictionary *)options
                 }]];
             });
         }
-         ];
+        ];
     } else {
         UIImage *chosenImage = [info objectForKey:UIImagePickerControllerOriginalImage];
         
@@ -454,7 +454,8 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                              withRect:CGRectNull
                                      withCreationDate:nil
                                  withModificationDate:nil
-                        ]);
+                                            withAngle:nil
+                       ]);
         } else {
             completion(nil);
         }
@@ -477,11 +478,11 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
              withFileName:[forAsset valueForKey:@"filename"]
       withLocalIdentifier:forAsset.localIdentifier
                completion:completion
-         ];
+        ];
     }];
 }
 
-- (NSDictionary*) createAttachmentResponse:(NSString*)filePath withExif:(NSDictionary*) exif withSourceURL:(NSString*)sourceURL withLocalIdentifier:(NSString*)localIdentifier withFilename:(NSString*)filename withWidth:(NSNumber*)width withHeight:(NSNumber*)height withMime:(NSString*)mime withSize:(NSNumber*)size withDuration:(NSNumber*)duration withData:(NSString*)data withRect:(CGRect)cropRect withCreationDate:(NSDate*)creationDate withModificationDate:(NSDate*)modificationDate {
+- (NSDictionary*) createAttachmentResponse:(NSString*)filePath withExif:(NSDictionary*) exif withSourceURL:(NSString*)sourceURL withLocalIdentifier:(NSString*)localIdentifier withFilename:(NSString*)filename withWidth:(NSNumber*)width withHeight:(NSNumber*)height withMime:(NSString*)mime withSize:(NSNumber*)size withDuration:(NSNumber*)duration withData:(NSString*)data withRect:(CGRect)cropRect withCreationDate:(NSDate*)creationDate withModificationDate:(NSDate*)modificationDate withAngle:(NSNumber*)angle{
     return @{
         @"path": (filePath && ![filePath isEqualToString:(@"")]) ? filePath : [NSNull null],
         @"sourceURL": (sourceURL) ? sourceURL : [NSNull null],
@@ -496,7 +497,8 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
         @"cropRect": CGRectIsNull(cropRect) ? [NSNull null] : [ImageCropPicker cgRectToDictionary:cropRect],
         @"creationDate": (creationDate) ? [NSString stringWithFormat:@"%.0f", [creationDate timeIntervalSince1970]] : [NSNull null],
         @"modificationDate": (modificationDate) ? [NSString stringWithFormat:@"%.0f", [modificationDate timeIntervalSince1970]] : [NSNull null],
-        @"duration": (duration) ? duration : [NSNull null]
+        @"duration": (duration) ? duration : [NSNull null],
+        @"angle": (angle) ? angle : [NSNull null]
     };
 }
 
@@ -641,7 +643,8 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                                                                 withRect:CGRectNull
                                                                         withCreationDate:phAsset.creationDate
                                                                     withModificationDate:phAsset.modificationDate
-                                                           ]];
+                                                                               withAngle:nil
+                                                          ]];
                                 }
                                 processed++;
                                 [lock unlock];
@@ -770,7 +773,8 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                                withRect:CGRectNull
                                        withCreationDate:creationDate
                                    withModificationDate:modificationDate
-                          ]);
+                                              withAngle:nil
+                         ]);
         }]];
     }
 }
@@ -798,7 +802,8 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
 // The original image has been cropped.
 - (void)imageCropViewController:(UIViewController *)controller
                    didCropImage:(UIImage *)croppedImage
-                  usingCropRect:(CGRect)cropRect {
+                  usingCropRect:(CGRect)cropRect
+                      withAngle:(NSInteger)angle {
     
     // we have correct rect, but not correct dimensions
     // so resize image
@@ -836,7 +841,8 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                            withRect:cropRect
                                    withCreationDate:self.croppingFile[@"creationDate"]
                                withModificationDate:self.croppingFile[@"modificationDate"]
-                      ]);
+                                          withAngle:[NSNumber numberWithUnsignedInteger:angle]
+                     ]);
     }]];
 }
 
@@ -902,7 +908,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
 }
 #pragma mark - TOCropViewController Delegate
 - (void)cropViewController:(TOCropViewController *)cropViewController didCropToImage:(UIImage *)image withRect:(CGRect)cropRect angle:(NSInteger)angle {
-    [self imageCropViewController:cropViewController didCropImage:image usingCropRect:cropRect];
+    [self imageCropViewController:cropViewController didCropImage:image usingCropRect:cropRect withAngle:angle];
 }
 
 - (void)cropViewController:(TOCropViewController *)cropViewController didFinishCancelled:(BOOL)cancelled {
