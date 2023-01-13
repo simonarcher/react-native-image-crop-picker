@@ -454,7 +454,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                              withRect:CGRectNull
                                      withCreationDate:nil
                                  withModificationDate:nil
-                                            withAngle:nil
+                                    withRotationAngle:nil
                        ]);
         } else {
             completion(nil);
@@ -482,7 +482,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
     }];
 }
 
-- (NSDictionary*) createAttachmentResponse:(NSString*)filePath withExif:(NSDictionary*) exif withSourceURL:(NSString*)sourceURL withLocalIdentifier:(NSString*)localIdentifier withFilename:(NSString*)filename withWidth:(NSNumber*)width withHeight:(NSNumber*)height withMime:(NSString*)mime withSize:(NSNumber*)size withDuration:(NSNumber*)duration withData:(NSString*)data withRect:(CGRect)cropRect withCreationDate:(NSDate*)creationDate withModificationDate:(NSDate*)modificationDate withAngle:(NSNumber*)angle{
+- (NSDictionary*) createAttachmentResponse:(NSString*)filePath withExif:(NSDictionary*) exif withSourceURL:(NSString*)sourceURL withLocalIdentifier:(NSString*)localIdentifier withFilename:(NSString*)filename withWidth:(NSNumber*)width withHeight:(NSNumber*)height withMime:(NSString*)mime withSize:(NSNumber*)size withDuration:(NSNumber*)duration withData:(NSString*)data withRect:(CGRect)cropRect withCreationDate:(NSDate*)creationDate withModificationDate:(NSDate*)modificationDate withRotationAngle:(NSNumber*)rotation{
     return @{
         @"path": (filePath && ![filePath isEqualToString:(@"")]) ? filePath : [NSNull null],
         @"sourceURL": (sourceURL) ? sourceURL : [NSNull null],
@@ -498,7 +498,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
         @"creationDate": (creationDate) ? [NSString stringWithFormat:@"%.0f", [creationDate timeIntervalSince1970]] : [NSNull null],
         @"modificationDate": (modificationDate) ? [NSString stringWithFormat:@"%.0f", [modificationDate timeIntervalSince1970]] : [NSNull null],
         @"duration": (duration) ? duration : [NSNull null],
-        @"angle": (angle) ? angle : [NSNull null]
+        @"rotation": (rotation) ? rotation : [NSNull null]
     };
 }
 
@@ -643,7 +643,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                                                                 withRect:CGRectNull
                                                                         withCreationDate:phAsset.creationDate
                                                                     withModificationDate:phAsset.modificationDate
-                                                                               withAngle:nil
+                                                                       withRotationAngle:nil
                                                           ]];
                                 }
                                 processed++;
@@ -773,7 +773,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                                withRect:CGRectNull
                                        withCreationDate:creationDate
                                    withModificationDate:modificationDate
-                                              withAngle:nil
+                                      withRotationAngle:nil
                          ]);
         }]];
     }
@@ -803,7 +803,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
 - (void)imageCropViewController:(UIViewController *)controller
                    didCropImage:(UIImage *)croppedImage
                   usingCropRect:(CGRect)cropRect
-                      withAngle:(NSInteger)angle {
+              withRotationAngle:(NSInteger)rotation {
     
     // we have correct rect, but not correct dimensions
     // so resize image
@@ -841,7 +841,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                            withRect:cropRect
                                    withCreationDate:self.croppingFile[@"creationDate"]
                                withModificationDate:self.croppingFile[@"modificationDate"]
-                                          withAngle:[NSNumber numberWithUnsignedInteger:angle]
+                                  withRotationAngle:[NSNumber numberWithUnsignedInteger:rotation]
                      ]);
     }]];
 }
@@ -908,7 +908,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
 }
 #pragma mark - TOCropViewController Delegate
 - (void)cropViewController:(TOCropViewController *)cropViewController didCropToImage:(UIImage *)image withRect:(CGRect)cropRect angle:(NSInteger)angle {
-    [self imageCropViewController:cropViewController didCropImage:image usingCropRect:cropRect withAngle:angle];
+    [self imageCropViewController:cropViewController didCropImage:image usingCropRect:cropRect withRotationAngle:angle];
 }
 
 - (void)cropViewController:(TOCropViewController *)cropViewController didFinishCancelled:(BOOL)cancelled {
