@@ -423,6 +423,11 @@ declare module "react-native-image-crop-picker" {
         data?: string | null;
 
         /**
+         * Optional base64 selected file representation.
+         */
+        rotation?: number | null;
+
+        /**
          * Cropped image rectangle (width, height, x, y).
          */
         cropRect?: CropRect | null;
